@@ -1,0 +1,412 @@
+\documentclass[a4paper,10pt]{article}
+%\documentclass[a4paper,10pt]{scrartcl}
+
+
+\usepackage[utf8x]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{tikz}
+\usepackage{mdwlist}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{setspace}
+\usepackage{color}
+\usepackage{thmbox}
+\usepackage[
+  bookmarks=true,
+    % Lesezeichen erzeugen
+  bookmarksopen=true,
+    % Lesezeichen ausgeklappt
+  bookmarksnumbered=true,
+    % Anzeige der Kapitelzahlen am Anfang der Namen der Lesezeichen
+  pdfstartpage=1,
+    % Seite, welche automatisch geöffnet werden soll
+    % praktisch, wenn z.B. im Inhaltsverzeichnis gestartet
+    % werden soll oder eine Seite bearbeitet wird.
+  %baseurl=http://www.server.de/dateiname.pdf,
+    % URL des PDF-Dokuments (oder Hintergrundinformationen)
+  pdftitle={Numerik},
+    % Titel des PDF-Dokuments
+  pdfauthor={Florian Münchbach},
+    % Autor(Innen) des PDF-Dokuments
+  %pdfsubject={Kurzbeschreibung als ein Satz},
+    % Inhaltsbeschreibung des PDF-Dokuments
+  %pdfkeywords={Stichwörter},
+    % Stichwortangabe zum PDF-Dokument
+  breaklinks=true,
+    % ermöglicht einen Umbruch von URLs
+  colorlinks=true,
+    % Einfärbung von Links
+  linkcolor=black,
+    % Linkfarbe: schwarz
+  anchorcolor=black,
+    % Ankerfarbe: schwarz
+  citecolor=black,
+    % Literaturlinks: schwarz
+  filecolor=black,
+    % Links zu lokalen Dateien: schwarz
+  menucolor=black,
+    % Acrobat Menü Einträge: schwarz
+  pagecolor=black,
+    % Links zu anderen Seiten im Text: schwarz
+  urlcolor=black
+    % URL-Farbe: schwarz
+]
+{hyperref}
+
+
+
+%\usepackage{geometry}
+%Kopf- und Fußzeile
+%\usepackage{fancyhdr}
+
+%\pagestyle{fancy}
+%\fancyhf{}
+ 
+%\renewcommand{\headrulewidth}{0pt}
+%Fußzeile links bzw. innen
+%\fancyfoot[L]{}
+%Fußzeile mittig (Seitennummer)
+%\fancyfoot[C]{\thepage}
+%Linie unten
+%\renewcommand{\footrulewidth}{0.5pt}
+% Title
+%\geometry{a4paper,left=2cm,right=2cm, top=2cm, bottom=2cm} 
+
+
+%Kopf- und Fußzeile
+\usepackage{fancyhdr}
+\fancyhf{}
+
+\pagestyle{fancy}
+%Kopfzeile mittig mit Kaptilname
+\fancyhead[C]{\nouppercase{\leftmark}}
+%Linie oben
+\renewcommand{\headrulewidth}{0.5pt}
+
+%Fußzeile links bzw. innen
+\fancyfoot[L]{}
+%Fußzeile mittig (Seitennummer)
+\fancyfoot[C]{\thepage}
+%Linie unten
+% \renewcommand{\footrulewidth}{0.5pt}
+
+
+
+%Aufnahme in das Inhaltsverzeichnis
+\setcounter{tocdepth}{4} 
+%Nummerierung vertiefen
+\setcounter{secnumdepth}{4}   
+
+
+
+
+\title{Numerik - Mitschrieb SS2012}
+
+
+\newcommand{\norm}[1]{ \left\Vert #1 \right\Vert }
+
+% Syntax: \newtheorem{Name}[Zählung]{Bezeichnung}[Gliederung]
+\newtheorem[L]{satz}{Satz}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{bsp}{Beispiel}[section]
+\newtheorem[S]{beweis}{Beweis}
+\newtheorem[S]{beh}{Behauptung}
+
+
+\begin{document}
+  \begin{titlepage}
+    \thispagestyle{empty}
+
+    \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+    \begin{center}
+      % Title
+      \HRule \\[0.4cm]
+      { \huge \bfseries Numerik}\\[0.5cm]
+      \textsc{\LARGE Mitschrieb aus dem SS2012}\\
+      \HRule \\[0.5cm]
+
+      \vfill
+
+%       % Author and supervisor
+%       \begin{minipage}[r]{\textwidth}
+% 	\begin{flushright}
+% 	  \large
+% 	\end{flushright}
+%       \end{minipage}\\[1.5cm]
+%       \begin{minipage}[r]{\textwidth}
+% 	\begin{flushright}
+% 	\end{flushright}
+%       \end{minipage}
+
+      \vfill
+
+      % Bottom of the page
+      {\large \today}
+
+    \end{center}
+  \end{titlepage}
+%Workarround für leere Seite....
+\newpage
+  \thispagestyle{empty}
+  \qquad
+\newpage
+
+\tableofcontents\thispagestyle{empty}
+\newpage
+
+\section{Normen}
+\subsection{Vektornormen}
+Die Algorithmen der numerischen Mathematik liefern Näherungswerte $\tilde{x}$ für die exakten Größen x.
+Um die Güte von $\tilde{x}$ zu bestimmen brauchen wir ein Maß für die Differenz $x - \tilde{x}$.
+Das Konzept einer Norm liefert solch ein Maß.
+
+\smallskip
+
+Eine Norm auf dem $\mathbb{K}$ -Vektorraum V ($\mathbb{K} \in \{\mathbb{R}, \mathbb{C}\}$) ist eine Funktion \\$\norm{\cdot} : V \rightarrow [0,\infty[$, für die gilt:
+                                                                                                                                                     \begin{enumerate}
+                                                                                                                                                      \item $\norm{\cdot} = 0 \Leftrightarrow v = 0$
+                                                                                                                                                      \item $\forall v \in V, \forall \alpha \in \mathbb{K} : \norm{\alpha \cdot v} = |\alpha| \cdot \norm{v}$
+                                                                                                                                                      \item $\forall v, w \in V: \norm{v + w} \leq \norm{ v} + \norm{w}$
+                                                                                                                                                     \end{enumerate}
+
+\smallskip
+
+\begin{bsp}[Verschiedene Normen]
+\begin{enumerate}
+ \item  $V = \mathbb{K}^n$ über $\mathbb{K}$
+  p-Normen:
+  $\norm{ v }_p := (\sum \limits_{k=1}^{n} |v_k|^p )^{\frac{1}{p}O}, 1 \leq p < \infty$
+  \item Euklidische Norm:
+  s. LA II
+
+ \item  Maximumsnorm:
+  $\norm{v}_\infty := max\{|v_k|: k=1:n\}$
+ \item  Maximums oder Supremumsnorm:
+  $\lim\limits_{p \rightarrow \infty} \norm{v}_p = \norm{v}_\infty$
+\end{enumerate}
+\end{bsp}
+
+Wegen $\{v^k\} \subset V : \lim\limits_{n \rightarrow ???} v^k = w $ gilt $ \lim\limits_{k \rightarrow \infty} \norm{v^ k - w} = 0 $.
+
+\smallskip
+
+\begin{satz}[Äquivalenz von Normen]
+Alle Normen auf einem endlichdimensionalen Vektorraum V sind \\\textbf{äquivalent}, das heißt zu jedem Paar von Normen $ \norm{\cdot}, \norm{\cdot}_* $ auf V \\existieren Konstanten
+$0 < m \leq M$, so dass gilt:\\
+$\forall v \in V: m \cdot \norm{v} \leq \norm{v}_* \leq M \cdot \norm{v} $
+\end{satz}
+
+\begin{bsp}[Äquivalenz von Normen]
+$\forall v \in \mathbb{K}^n:
+\norm{v}_q \leq \norm{v}_p \leq n^{(\frac{1}{p} - \frac{1}{q})} \norm{v}_q$ mit 
+$1 \leq p \leq q \leq \infty$
+\end{bsp}
+
+
+\subsection{Matrixnormen}
+\begin{satz}[Matrixnorm]
+Seien $\norm{\cdot}_* $ und $ \norm{\cdot}_\bullet $ Normen auf $\mathbb{K}^n$ bzw. $\mathbb{K}^m$.\\
+Dann ist $$ \norm{\cdot} := \mathbb{K}^{ m \times n} \rightarrow [0, \infty [ $$ mit
+                                                                                                                                                                     $$\norm{A} := \max \limits_{v \in \mathbb{K}^n \ {0}} { \frac{\norm{Av}_\bullet}{\norm{v}_*}} = \max\limits_{v \in \mathbb{K}^n, \norm{v}_* = 1} { {\norm{Av}_\bullet}}$$
+eine Norm auf dem Vektornormen der $m \times n$-Matrizen.\\
+Sie wird \textbf{Matrix- oder Operatornorm} genannt.
+\end{satz}
+
+\begin{definition}
+ obiger Satz ist zugleich eine Definition.
+\end{definition}
+
+\smallskip
+
+\begin{beweis}[des Gleichheitszeichens in obiger Gleichung]
+$\frac{\norm{Av}_\bullet}{\norm{v}_*} = \norm{A} \frac{v}{\norm{v}_*}$\\
+Betrachten wir $\norm{\frac{v}{\norm{v}_*}}_* = \frac{1}{\norm{v}_*} * \norm{v}_* = 1$
+\end{beweis}
+
+\smallskip
+
+Anmerkung:\\
+Eine Matrixnorm auf $\mathbb{K}^{m 
+\times n}$ wird durch die gewählten Normen auf $\mathbb{K}^n$ und $\mathbb{K}^m$ induziert; sie hängen also von diesen ab.\\
+
+\smallskip
+
+Was beschreibt die Matrixnorm?\\
+Die Matrixnorm beschreibt die Maximale Streckung, die ein Matrix, die auf einen Vektor angewandt wird, verursachen kann.
+
+\bigskip
+
+\begin{lemma}
+Seien $\norm{\cdot}_*$ und $\norm{\cdot}_\bullet$ Normen auf $\mathbb{K}^n$ bzw. $\mathbb{K}^m$, die für alle n und m definiert sind (z.B. die p-Normen).\\
+Dann ist die induzierte Matrixnorm submultiplikativ, d.h. 
+$$\forall A \in \mathbb{K}^{m x n} \forall B \in \mathbb{K}^{n x r} :
+\norm{AB} \leq \norm{A} \norm{B}$$
+(Anmerkung: s. Ähnlichkeit zur Dreiecksungleichung).
+
+\bigskip
+
+Außerdem gilt:\\
+Wegen $\forall v \in \mathbb{K}^n: \norm{Av}_\bullet \leq \norm{A} \norm{v}_*$ gilt o.B.d.A nun auch $ v \neq 0 $.\\
+Damit ist $\frac{\norm{Av}_\bullet}{\norm{v}_*} \leq \norm{A}) = max \frac{\norm{Aw}_\bullet }{\norm{w}_*}$.
+
+\end{lemma}
+
+\newpage
+
+\subsection{Matrix-p-Norm}
+Sei $A \in \mathbb{K}^{m \times n}$.\\
+Dann ist $\norm{A}_p := \max\limits_{\norm{v}_p = 1} \norm{Av}_p$ für $ 1 \leq p \leq \infty$ und $\norm{I_n}_p = 1$ wobei $I_n \in \mathbb{K}^{n \times n}$ die Einheitsmatrix ist.\\
+
+\subsubsection{Spaltensummennorm}
+  Sei $p = 1$, dann ist 
+  \begin{eqnarray*}
+  A = (a^{(1)}, \ldots, a^{(n)}, a^{(i)}) \in \mathbb{K}^m \\
+  \norm{Av}_1 &=& \norm{\sum\limits_{i = 1}^n {v_i a^{(i)}}_1} \leq \sum\limits_{i = 1}^n \norm{v_i a^{(i)}}_1\\
+    &=& \sum\limits_{i = 1} |v_i| \cdot \norm{a^{(i)}}_1 \leq \max\limits{1 \leq i\leq n} \norm{a^{(i)}}_1 \norm{v}_1\\
+  \end{eqnarray*}
+  $\Rightarrow \frac{\norm{Av}_1}{\norm{v}_1} \leq \max\limits{1 \leq i\leq n} \norm{a^{(i)}}_1\\
+  \Rightarrow \norm{A} \leq \max\limits{1 \leq i\leq n} \norm{a^{(i)}}_1$
+
+  \bigskip
+
+  Sei $ j \in \{1, \ldots, n\},\quad \norm{a^{(j)}}_1 = \max\limits_{1 \leq i\leq n} \norm{a^{(i)}}_1$
+  $e^{(j)} \in \mathbb{K}^n; $
+  \begin{equation*}
+  e^{(j)}_k=
+  \left\{
+  \begin{aligned}
+  % a &= b + c \\
+  % d &= e + f 
+  1 &: j = k,\\
+  0 &: sonst
+  \end{aligned}
+  \right.
+  \end{equation*}
+  $\norm{e^{(j)}}_1 = 1\\
+  \norm{Ae^{(j)}}_1 = \norm{a^{(j)}}_1 = ( \max\limits{1 \leq i\leq n} \norm{a^{(i)}}_1) \cdot \norm{e^{(j)}}_1\\
+  \Rightarrow \norm{A}_1 = \max\limits{1 \leq i\leq n} \norm{a^{(i)}}_1 = \max\limits_{1 \leq i \leq n} \sum\limits_{j = 1}^n{|a_{j,i}|}$
+
+  \medskip
+
+  Daher heißt die Matrix-1-Norm auch \textbf{Spaltensummennorm}.\\
+
+  \bigskip
+
+  \begin{bsp}
+  Sei $A = 
+  \begin{pmatrix}
+  1 & 10 & 3\\
+  -5 & -1 & 0\\
+  3i & \sqrt{2} & 0
+  \end{pmatrix}$\\
+  Dann ist $\norm{A}_1 = \max\{9, 11 + \sqrt{2}, 3\} = 11 + \sqrt{2}$
+  \end{bsp}
+
+\subsubsection{Zeilensummennorm}
+  Sei nun $p = \infty$, dann heißt
+  $\quad \norm{A}_\infty = \max\limits_{1\leq i \leq m}\sum\limits_{j=1}^n | a_{i,j}| \quad$
+  \textbf{Zeilensummennorm}.
+
+\begin{bsp}
+(Fortsetzung von obigem Beispiel)\\
+ $\norm{A}_\infty = \max\{14, 6, 3+\sqrt{2}\} = 14$
+\end{bsp}
+
+\subsubsection{Spektralnorm}
+Sei $ p = 2$, dann heißt die Matrix-2-Norm \textbf{Spektralnorm}, denn $$\norm{A}_2 = \lambda_{max} (A^H  A)^\frac{1}{2}$$
+(größter Eigenwert von $A^H A$)\\
+Eigenschaften:\\
+\begin{itemize}
+ \item $\norm{A}_2 = \norm{A^H}_2$
+ \item $\norm{A^H A}_2 = \norm{A}_2^2$
+ \item $\forall Q$ unitär : $\norm{Q A}_2 = \norm{A}_2$ \hfill unitär $Q^T Q = I_n, Q^H Q = I_n$
+\end{itemize}
+
+\subsection{Kondition einer Matrix}
+Sei $A \in \mathbb{K}^{n\times n}$ regulär.
+Dann heißt
+$$\kappa (A) =\norm{A} \norm{A^{-1}}$$
+die Kondition (Konditionszahl) von A bzw. $\norm{\cdot}$.\\
+Die Konditionszahl ist ein Maß für die Sensitivität der Lösung eines linearen Gleichungssystems $Ax = b$ gegenüber Störungen in b (und auch in A).
+
+\begin{satz}
+ A sei regulär, dann gilt:
+$$\frac{\norm{A^{-1} b - A^{-1} \tilde{b}}}{\norm{A^{-1} b}} \leq \kappa(A) \cdot \frac{\norm{b - \tilde{b}}}{\norm{b}}$$ ist scharf.
+Der Kondition $\kappa(A)$ liegt hier die von $\norm{\cdot}$ induzierte Matrixnorm zugrunde.
+\end{satz}
+
+\begin{beweis}
+ $\frac{\norm{A^{-1} b - A^{-1} \tilde{b}}}{\norm{A^{-1} b}} = \norm{A^{-1} (b - \tilde{b})} \leq \norm{A^{-1} } \norm{b - \tilde{b}}\\
+\norm{b} = \norm{AA^{⁻1} b} \leq \norm{A}\norm{A^{-1} b} \Rightarrow \frac{1}{\norm{A^{-1} b}} \leq \frac{\norm{A}}{\norm{b}}$\\
+Wegen $a < b, c < d \Rightarrow ac < bd$ folgt: $$ \frac{\norm{A^{-1} b - A^{-1} \tilde{b}}}{\norm{A^{-1} b}} \leq \underbrace{\kappa(A)}\limits_{\norm{A} \norm{A^{-1}}} \frac{\norm{b - \tilde b}}{\norm{b}}\quad.$$\\\hfill \qed
+\end{beweis}
+
+\begin{beh}
+ $\kappa(A) \geq 1\\
+1 = \norm{I_n} = \norm{A \cdot A^{-1}} \leq \norm{A}\norm{A^{-1}} = \kappa(A)$
+\end{beh}
+Die Konditionszahl einer Matrix misst, wie weit diese von einer singulären (d.h. nichtregulären) Matrix entfernt ist.\\
+\begin{satz}
+ Sei $A \in \mathbb{K}^{n\times n}$ regulär. Dann ist
+$$\min \left\{\frac{\norm{A - S}_p}{\norm{A}_p} : S \in \mathbb{K}~ singul\ddot{a}r\right\} = \frac{1}{\kappa(A)}$$\\
+wobei $\kappa = \norm{A}_p \norm{A^{-1}}_p$.
+\end{satz}
+
+\begin{satz}
+ Sei $\lambda_{\max{(A)}}$ der betragsgrößte Eigenwert von $A \in \mathbb{K}^{n \times n}$. Dann gilt\\ 
+$$ | \lambda_{\max(A)}|  = \inf\left\{\norm{A} : \norm{\cdot} ist~induzierte~Matrixnorm\right\}$$\\
+Das heißt, zu jedem $\delta > 0$ gibt es eine induzierte Matrixnorm $\norm{\cdot}_\delta$, so dass $$ \norm{A}_{\delta} y  | \lambda_{\max{(A)}} | + \delta$$
+ist.
+\end{satz}
+
+
+$A \in \mathbb{K}^{n \times n}, \lambda \in \mathbb{C}$ ist Eigenwert von A.\\
+Es gilt: $ | \lambda | \leq \norm{A}$, wobei $\norm{\cdot}$ induzierte Matrixnorm ist.
+\newpage
+
+\section{Lineare Gleichungssysteme: Direkte Löser}
+Gegeben $A = \{a_{i,j}\} \in \mathbb{R}^n$.\\
+Gesucht: $x \in \mathbb{R}^n$ mit $Ax = b$.
+\begin{equation}
+ Ax = b \Leftrightarrow \sum\limits_{j = 1}^n a_{i,j}x_j = b_j, 1 \leq i\leq n 
+\end{equation}
+
+
+\subsection{Auflösung gestaffelter Systeme}
+Sei $Rx = z$ mit $r_{i,j} = 0, i > j$, dann ist R eine obere Dreiecksmatrix.\\
+
+\smallskip
+ \begin{eqnarray*} %use asterisk here to supress numbering  r_{1,1}x_1 + r_{1,2}x_2+ \ldots r_{1,n}x_n &=& z_1\\
+  r_{2,2}x_2+ \ldots r_{2,n}x_n &=& z_2\\
+  \vdots\\
+  r_{1,n}x_n &=& z_n
+ \end{eqnarray*}
+
+Wegen $0 \neq \det{R} = \prod \limits_{i = 1}^n r_{i,i} $ folgt $ r_{i,i} \neq 0$ für $ 1 \leq i \leq n$.
+\begin{eqnarray*}
+  x_n &=& \frac{z_n}{r_{n,n}}\\
+  x_{n-1} &=& \frac{  z_{n-1} - r_{n-1, n} x_n  }{  r_{n-1,n-1}  }\\
+  \vdots\\
+  x_{n-1} &=& \frac{z_{i} - r_{i, i+1} x_{i+1} - \ldots - r_{i, n} x_n}{r_{i,i}}\\
+  \vdots\\
+  x_{n-1} &=& \frac{z_{1} - r_{1, 2} x_{2} - \ldots - r_{1, n} x_n}{r_{1,1}}
+\end{eqnarray*}
+
+\texttt{(Rückwärtssubstitution)}\\
+
+\smallskip
+
+\textbf{Aufwand:} Berechnung von $x_i$ benötigt (n-i) Additionen und (n-i) Multiplikationen, so wie 1 Division.
+$\Rightarrow \sum\limits_{i=1} {[2(n-i)+1 ]} = n²$ Operationen.\\
+
+\smallskip
+
+Das Auflösen eines unteren Dreieckssystems: $Lx = z$ mit $l_{i,j}= 0  , i< j$
+verläuft analog und heißt \texttt{Vorwärtssubstitution}.
+
+
+
+\end{document}
