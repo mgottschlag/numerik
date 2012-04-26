@@ -12,6 +12,7 @@
 \usepackage{setspace}
 \usepackage{color}
 \usepackage{thmbox}
+\usepackage{verbatim}
 \usepackage[
   bookmarks=true,
     % Lesezeichen erzeugen
@@ -370,7 +371,7 @@ Es gilt: $ | \lambda | \leq \norm{A}$, wobei $\norm{\cdot}$ induzierte Matrixnor
 \section{Lineare Gleichungssysteme: Direkte Löser}
 Gegeben $A = \{a_{i,j}\} \in \mathbb{R}^n$.\\
 Gesucht: $x \in \mathbb{R}^n$ mit $Ax = b$.
-\begin{equation}
+\begin{equation} \label{eq:lgs}
  Ax = b \Leftrightarrow \sum\limits_{j = 1}^n a_{i,j}x_j = b_j, 1 \leq i\leq n 
 \end{equation}
 
@@ -407,6 +408,305 @@ $\Rightarrow \sum\limits_{i=1} {[2(n-i)+1 ]} = n²$ Operationen.\\
 Das Auflösen eines unteren Dreieckssystems: $Lx = z$ mit $l_{i,j}= 0  , i< j$
 verläuft analog und heißt \texttt{Vorwärtssubstitution}.
 
+\subsection{Gaußscher Algorithmus: LR-Zerlegung}
 
+Idee: Führe \eqref{eq:lgs} über in ein Dreieckssystem, das dieselbe Lösung besitzt.
+
+Zulässige Umformungen sind:
+\begin{itemize}
+  \item Vertauschen von Zeilen
+  \item Vertauschen von Spalten von $A$ (Umnummerierung der Unbekannten nötig)
+  \item Multiplikation einer Zeile mit einer Zahl $\neq 0$
+  \item Addition des Vielfachen einer Zeile zu einer anderen
+\end{itemize}
+
+Verkürzte Schreibweise des Gleichungssystems:
+
+\[
+  \begin{pmatrix}
+    a_{1,1} & \dots & a_{1,n} & b_1 \\
+    a_{2,1} & \dots & a_{2,n} & b_2 \\
+    \vdots & & & \vdots \\
+    a_{n,1} & \dots & a_{n,n} & b_n \\
+  \end{pmatrix}
+  = (A, b) = (A^{(1)}, b^{(1)})
+\]
+
+\textbf{1. Schritt:} Produziere Nullen unterhalb von $a_{1,1}$. Es sei $a_{1,1} \neq 0$.
+  Subtrahiere das $l_{j,1} := \frac{a_{j,1}}{a_{1,1}}$-fache der 1. Zeile von der j-ten Zeile.
+
+\[
+  \begin{pmatrix}
+    a_{1,1}^{(1)} & & \dots & a_{1,n}^{(1)} & b_1^{(1)} \\
+    0 & a_{2,2}^{(2)} & \dots & a_{2,n}^{(2)} & b_2^{(2)} \\
+    \vdots & \vdots & & \vdots \\
+    0 & a_{n,2}^{(2)} & \dots & a_{n,n}^{(2)} & b_n^{(2)} \\
+  \end{pmatrix}
+  = (A^{(2)}, b^{(2)})
+\]
+
+Dabei ist
+\begin{align*}
+  a_{j, i}^{(2)} = a_{j, i}^{(1)} - l_{j, 1} a_{1, i}^{(1)} \\
+  b_{j}^{(2)} = b_{j}^{(1)} - l_{j, 1} b_{1}^{(1)} \\
+\end{align*}
+
+Nach dem Schritt kann $A^{(2)}$ anders geschrieben werden als $A^{(2)} = L_1 A^{(1)}$, $b^{(2)}=L_1 b^{(1)}$ mit
+
+% TODO: Matrix
+\begin{comment}
+\[
+  L_1 = \begin{pmatrix}
+    1 & & & & 0 \\
+    -l_{2,1} & 1 \\
+    -l_{3,1} & 0 & 1 \\
+     \vdots & \vdots & & \ddots \\
+     -l_{n,1} & 0 & 0 & \dots & 1 \\
+     % TODO!
+  \end{pmatrix}
+\]
+\end{comment}
+
+\textbf{k-ter Schritt ($2 \leq k \leq n-1$):}
+
+\[
+  (A^{(k)}, b^{(k)}) \rightarrow (A^{(k+1)}, b^{(k+1)})
+\]
+
+% TODO: Matrix
+\begin{comment}
+\[
+  \begin{pmatrix}
+    a_{1, 1}^(1) & & & & \dots & a_{1, n}^(1) & b_1^{(1)} \\
+    0 & a_% TODO{2, 2}^(2) & & & \dots & a_{2, n}^(2) & b_2^{(2)} \\
+    0 & 0 & \ddots & & &  & \vdots & \vdots \\
+    0 & 0 & 0 & a_{k, k}^(k) & \dots & a_{k, n}^(k) & b_k^{(k)} \\
+    \vdots & \vdots & \vdots & \vdots & & \vdots & \vdots \\
+    0 & 0 & 0 & a_{n, k}^(k) & \dots & a_{n, n}^(k) & b_n^{(k)} \\
+  \end{pmatrix}
+\]
+\end{comment}
+
+Sei $a_{k,k}^{(k)} \neq 0$.
+
+\begin{align*}
+  &l_{j, k} := a_{j,k}^{(k)} / a_{k,k}^{(k)}, j=k+1,\dots, n \\
+  &a_{j,k}^{(k+1)} = a_{j,i}^{(k)} - l_{j, k} a_{k,i}^{(k)}, k+1 \leq i,j \leq n \\
+  &b_{j}^{(k+1)} = b_{j}^{(k)} - l_{j, k} b_{k}^{(k)}, j=k+1,\dots, n \\
+\end{align*}
+
+$a_{k,k}^{(k)}$ heißt Pivot-Element der $k$-ten Spalte.
+
+\[
+  A^{k+1} = L_k A^{(k)}, b^{(k+1)} = L_k b^{(k)}
+\]
+
+\[
+  L_k = \begin{pmatrix}
+    TODO
+  \end{pmatrix}
+  = I_n - l_k \underbrace{{{e^{(k)}}^T}}_{\in \mathbb{R}^{n \times n}}
+\]
+
+\[
+  l_k = \begin{pmatrix}
+          0 \\ \vdots \\ 0 \\ l_{k+1,k} \\ \vdots \\ l_{n,k}
+        \end{pmatrix},
+  e^{(k)} = \begin{pmatrix} 0 \\ \vdots \\ 0 \\ 1 \\ 0 \\ \vdots \\ 0 \end{pmatrix} % TODO: k-te Komponente markieren
+\]
+
+Falls $a_{k,k}^{(k)} \neq 0$ für $k=1, \dots, n-1$, dann $R = A^{(k)} = L_{n-1} A^{(n-1)} = L_{n-1} L_{n-2} \dots L_{1} A$.
+
+$\Rightarrow A = LR$ mit $L=L_1^{-1} L_2^{-1} \dots L_{n-1}^{-1}$
+
+\textbf{Beh.:} $L_k^{-1} = I_n + l_k {e^{(k)}}^T$
+
+\textbf{Bew.:} $L_k (I_n + l_k {e^{(k)}}^T) = I_n - l_k \underbrace{{e^{(k)}}^T l_k}_{=0} {e^{(k)}}^T$
+
+\begin{align*}
+  \Rightarrow L_k &= (I_n + l_1 {e^{(1)}}^T) (I_n + l_2 {e^{(2)}}^T) \dots (I_n + l_{n-1} {e^{(n-1)}}^T) \\
+                  &= I_n + {e^{(1)}}^T + l_2 {e^{(2)}}^T + \dots l_{n-1} {e^{(n-1)}}^T \\
+                  &= \begin{pmatrix}
+                       1 \\
+                       l_{2,1} & 1 & & 0 \\
+                       l_{3,1} & l_{3,2} & 1 \\
+                       \vdots & \vdots & \ddots & \ddots \\
+                       l_{n,1} & l_{n,2} & \dots & l_{n,n-1} & 1 \\
+                     \end{pmatrix} \\
+\end{align*}
+
+\begin{definition}
+  Die Zerlegung einer Matrix $A = LR$ in eine obere Dreiecksmatrix $R$ und eine untere Dreiecksmatrix $L$, die nur Einsen auf de Diagonalen hat, heißt \textbf{Gaußsche Dreieckszerlegung} oder \textbf{LR-Zerlegung}.
+\end{definition}
+
+\begin{bsp}
+  \[
+    A = \begin{pmatrix}
+          2 & 1 & 1 \\
+          4 & 3 & 3 \\
+          8 & 7 & 9
+        \end{pmatrix}
+  \]
+
+  \[
+    \underbrace{\begin{pmatrix}
+      1 & 0 & 0 \\
+      -2 & 1 & 0 \\
+      -4 & 0 & 1
+    \end{pmatrix}}_{L_1}
+    \underbrace{\begin{pmatrix}
+      2 & 1 & 1 \\
+      4 & 3 & 3 \\
+      8 & 7 & 9
+    \end{pmatrix}}_{A^{(1)}}
+    =
+    \underbrace{\begin{pmatrix}
+      2 & 1 & 1 \\
+      0 & 1 & 1 \\
+      0 & 3 & 5
+    \end{pmatrix}}_{A^{(2)}}
+  \]
+
+  \[
+    \underbrace{\begin{pmatrix}
+      1 & 0 & 0 \\
+      0 & 1 & 0 \\
+      0 & -3 & 1
+    \end{pmatrix}}_{L_2}
+    \underbrace{\begin{pmatrix}
+      2 & 1 & 1 \\
+      0 & 1 & 1 \\
+      0 & 3 & 5
+    \end{pmatrix}}_{A^{(2)}}
+    =
+    \underbrace{\begin{pmatrix}
+      2 & 1 & 1 \\
+      0 & 1 & 1 \\
+      0 & 0 & 2
+    \end{pmatrix}}_{A^{(3)}=R}
+  \]
+
+  \[
+    L = L_1^{-1} L_2^{-1} =
+      \begin{pmatrix}
+        1 & 0 & 0 \\
+        2 & 1 & 0 \\
+        4 & 3 & 1 \\
+      \end{pmatrix}
+  \]
+
+  \[
+    A =
+      \begin{pmatrix}
+        1 & 0 & 0 \\
+        2 & 1 & 0 \\
+        4 & 3 & 1 \\
+      \end{pmatrix}
+      \begin{pmatrix}
+        2 & 1 & 1 \\
+        0 & 1 & 1 \\
+        0 & 0 & 2
+      \end{pmatrix}
+  \]
+
+\end{bsp}
+
+\subsection{Gauß-Elimination zur Lösung von (2.1)} % TODO: Subsection?
+
+\begin{enumerate}
+  \item $A = LR$ (LR-Zerlegung)
+  \item $Lz = b$ Vorwärtssubstitution
+  \item $Rx = Z$ Rückwärtssubstitution
+\end{enumerate}
+
+Die LR-Zerlegung benötigt dabei $O(^3)$ Operationen.
+
+\subsection{LR-Zerlegung mit Spaltenpivotsuche}
+
+Vertausche im $k$-ten Schritt (2.2) die $k$-te Zeile mit einer Zeile $j \geq k$, für die gilt
+
+\[
+  |a_{j,k}^{(k)} | = \max \limits_{k \leq i \leq n} | a_{i,k}^{(k)} |
+\]
+
+\begin{bsp}
+  \[
+    p = \begin{pmatrix} 1 & 2 & 3 \end{pmatrix}
+  \]
+
+  \begin{align*}
+    &\begin{pmatrix}
+       2 & 1 & 1 \\
+       4 & 3 & 3 \\
+       8 & 7 & 9
+    \end{pmatrix} \\
+  &\xrightarrow[p=(3\ 2\ 1)]{Pivot}
+    \begin{pmatrix}
+       8 & 7 & 9 \\
+       4 & 3 & 3 \\
+       2 & 1 & 1
+    \end{pmatrix} \\
+  &\stackrel{\textnormal{El.}}{\rightarrow}
+    \begin{pmatrix}
+       8 & 7 & 9 \\
+       \frac{1}{2} & -\frac{1}{2} & -\frac{3}{2} \\
+       \frac{1}{4} & -\frac{3}{4} & -\frac{5}{4}
+    \end{pmatrix} \\
+  &\xrightarrow[p=(3\ 1\ 2)]{Pivot}
+    \begin{pmatrix}
+       8 & 7 & 9 \\
+       \frac{1}{4} & -\frac{3}{4} & -\frac{5}{4} \\
+       \frac{1}{2} & -\frac{1}{2} & -\frac{3}{2}
+    \end{pmatrix} \\
+  &\stackrel{\textnormal{El.}}{\rightarrow}
+    \begin{pmatrix}
+       8 & 7 & 9 \\
+       \frac{1}{4} & -\frac{3}{4} & -\frac{5}{4} \\
+       \frac{1}{2} & \frac{2}{3} & -\frac{2}{3}
+    \end{pmatrix}\\
+  \end{align*}
+
+  \[
+    \Rightarrow
+    \underbrace{\begin{pmatrix}
+       0 & 0 & 1 \\
+       1 & 0 & 0 \\
+       0 & 1 & 0
+    \end{pmatrix}}_P
+    \underbrace{\begin{pmatrix}
+       2 & 1 & 1 \\
+       4 & 3 & 3 \\
+       8 & 7 & 9
+    \end{pmatrix}}_A
+    =
+    \underbrace{\begin{pmatrix}
+       1 & 0 & 0 \\
+       \frac{1}{4} & 1 & 0 \\
+       \frac{1}{2} & \frac{2}{3} & 1 \\
+    \end{pmatrix}}_L
+    \underbrace{\begin{pmatrix}
+       8 & 7 & 9 \\
+       0 & -\frac{3}{4} & -\frac{5}{4} \\
+       0 & 0 & -\frac{2}{3} \\
+    \end{pmatrix}}_R
+  \]
+\end{bsp}
+
+\begin{satz}
+  Der Gaußalgorithmus mit Spaltenpivotsuche liefert für jede reguläre Matrix $A$ eine Permutationsmatrix $P$ sowie Dreiecksmatrizen $L$ und $R$, so dass
+  \[
+    PA = LR
+  \]
+  die LR-Zerlegung von $PA$ ist. Die Elemente von $L$ sind betragsmäßig kleiner oder gleich 1.
+\end{satz}
+
+\textbf{Bemerkung:}
+\[
+  A = PLR \Rightarrow \det A = \det P \underbrace{\det L}_{=1} \det R = \det P \prod_{i=1}^n r_{i,i}
+\]
+
+\[
+  \det P = (-1)^l, l\textnormal{ Anzahl der Zeilenvertauschungen}
+\]
 
 \end{document}
