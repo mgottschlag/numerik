@@ -1,5 +1,4 @@
-\documentclass[a4paper,10pt]{article}
-%\documentclass[a4paper,10pt]{scrartcl}
+\documentclass[a4paper,10pt]{scrartcl}
 
 
 \usepackage[utf8x]{inputenc}
@@ -167,11 +166,11 @@ Das Konzept einer Norm liefert solch ein Maß.
 \smallskip
 
 Eine Norm auf dem $\mathbb{K}$ -Vektorraum V ($\mathbb{K} \in \{\mathbb{R}, \mathbb{C}\}$) ist eine Funktion \\$\norm{\cdot} : V \rightarrow [0,\infty[$, für die gilt:
-                                                                                                                                                     \begin{enumerate}
-                                                                                                                                                      \item $\norm{\cdot} = 0 \Leftrightarrow v = 0$
-                                                                                                                                                      \item $\forall v \in V, \forall \alpha \in \mathbb{K} : \norm{\alpha \cdot v} = |\alpha| \cdot \norm{v}$
-                                                                                                                                                      \item $\forall v, w \in V: \norm{v + w} \leq \norm{ v} + \norm{w}$
-                                                                                                                                                     \end{enumerate}
+\begin{enumerate}
+ \item $\norm{\cdot} = 0 \Leftrightarrow v = 0$
+ \item $\forall v \in V, \forall \alpha \in \mathbb{K} : \norm{\alpha \cdot v} = |\alpha| \cdot \norm{v}$
+ \item $\forall v, w \in V: \norm{v + w} \leq \norm{ v} + \norm{w}$
+\end{enumerate}
 
 \smallskip
 
@@ -195,7 +194,7 @@ Wegen $\{v^k\} \subset V : \lim\limits_{n \rightarrow ???} v^k = w $ gilt $ \lim
 \smallskip
 
 \begin{satz}[Äquivalenz von Normen]
-Alle Normen auf einem endlichdimensionalen Vektorraum V sind \\\textbf{äquivalent}, das heißt zu jedem Paar von Normen $ \norm{\cdot}, \norm{\cdot}_* $ auf V \\existieren Konstanten
+Alle Normen auf einem endlichdimensionalen Vektorraum V sind \textbf{äquivalent}, das heißt zu jedem Paar von Normen $ \norm{\cdot}, \norm{\cdot}_* $ auf V existieren Konstanten
 $0 < m \leq M$, so dass gilt:\\
 $\forall v \in V: m \cdot \norm{v} \leq \norm{v}_* \leq M \cdot \norm{v} $
 \end{satz}
@@ -217,7 +216,7 @@ Sie wird \textbf{Matrix- oder Operatornorm} genannt.
 \end{satz}
 
 \begin{definition}
- obiger Satz ist zugleich eine Definition.
+ Obiger Satz ist zugleich eine Definition.
 \end{definition}
 
 \smallskip
@@ -236,7 +235,7 @@ Eine Matrixnorm auf $\mathbb{K}^{m
 \smallskip
 
 Was beschreibt die Matrixnorm?\\
-Die Matrixnorm beschreibt die maximale Streckung, die ein Matrix, die auf einen Vektor angewandt wird, verursachen kann.
+Die Matrixnorm beschreibt die maximale Streckung, die eine Matrix angewendet auf einen Vektor verursachen kann.
 
 \bigskip
 
@@ -391,9 +390,9 @@ Wegen $0 \neq \det{R} = \prod \limits_{i = 1}^n r_{i,i} $ folgt $ r_{i,i} \neq 0
   x_n &=& \frac{z_n}{r_{n,n}}\\
   x_{n-1} &=& \frac{  z_{n-1} - r_{n-1, n} x_n  }{  r_{n-1,n-1}  }\\
   \vdots\\
-  x_{n-1} &=& \frac{z_{i} - r_{i, i+1} x_{i+1} - \ldots - r_{i, n} x_n}{r_{i,i}}\\
+  x_{i} &=& \frac{z_{i} - r_{i, i+1} x_{i+1} - \ldots - r_{i, n} x_n}{r_{i,i}}\\
   \vdots\\
-  x_{n-1} &=& \frac{z_{1} - r_{1, 2} x_{2} - \ldots - r_{1, n} x_n}{r_{1,1}}
+  x_{1} &=& \frac{z_{1} - r_{1, 2} x_{2} - \ldots - r_{1, n} x_n}{r_{1,1}}
 \end{eqnarray*}
 
 \texttt{(Rückwärtssubstitution)}\\
